@@ -7,12 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0a0a0a',
-        surface: '#141414',
-        primary: '#E50914', // Netflix red style
-        secondary: '#1f1f1f',
-        text: '#ffffff',
-        muted: '#a3a3a3',
+        background: '#11100e',
+        surface: '#1a1815',
+        primary: '#e0a83e',
+        accent: '#e0a83e',
+        secondary: '#2a2620',
+        text: '#f5f0e8',
+        muted: '#aaa196',
+        terracotta: '#c65b3d',
+        sand: '#d7c39a',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
@@ -21,4 +24,4 @@ export default {
     },
   },
   plugins: [],
-}
+};
