@@ -1,7 +1,7 @@
 import { cn } from './Button';
 
 export const Card = ({ className, children, ...props }) => (
-  <div className={cn('overflow-hidden border border-white/10 bg-surface text-text', className)} {...props}>
+  <div className={cn('overflow-hidden border border-white/10 bg-surface text-text shadow-sm transition-colors', className)} {...props}>
     {children}
   </div>
 );
