@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Film, User, Menu, Search, LogOut, X } from 'lucide-react';
+import { Film, User, Menu, Search, LogOut } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../ui/Button';
 import { USER_TYPE, isProducerRole } from '../constants/enums';
@@ -8,7 +8,7 @@ export const Navbar = ({ onMenuClick }) => {
   const { isAuthenticated, user, logout } = useAuth();
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b border-white/10 bg-background/90 backdrop-blur-xl">
+    <nav className="sticky top-0 z-40 w-full border-b border-white/10 bg-background/95 backdrop-blur-xl">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-12">
         <div className="flex items-center gap-7">
           <button
