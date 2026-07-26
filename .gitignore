@@ -1,6 +1,8 @@
 # Java / Maven
+# Maven
 **/target/
-**/*.class
+**/target/**
+*.class
 
 # Node / React / Vite
 **/node_modules/
