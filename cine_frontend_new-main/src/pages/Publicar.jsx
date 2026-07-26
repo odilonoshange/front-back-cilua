@@ -11,12 +11,14 @@ import { Modal } from '../ui/Modal';
 import { CONTENT_TYPE, CONTENT_TYPE_LABELS, DEFAULT_CONTENT_TYPE } from '../constants/enums';
 
 const categories = [
-  { value: 'musica', label: 'Música' },
-  { value: 'teatro', label: 'Teatro' },
-  { value: 'cinema', label: 'Cinema' },
-  { value: 'exposicao', label: 'Exposição' },
-  { value: 'workshop', label: 'Workshop' },
-  { value: 'festa', label: 'Festa' },
+  { value: 'drama', label: 'Drama' },
+  { value: 'comedia', label: 'Comédia' },
+  { value: 'acao', label: 'Ação' },
+  { value: 'aventura', label: 'Aventura' },
+  { value: 'documentario', label: 'Documentário' },
+  { value: 'animacao', label: 'Animação' },
+  { value: 'musical', label: 'Musical' },
+  { value: 'experimental', label: 'Experimental' },
 ];
 
 const defaultValues = {
@@ -35,10 +37,8 @@ export default function Publicar() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoadingContent, setIsLoadingContent] = useState(false);
   const [pendingContent, setPendingContent] = useState(null);
   const [loadedContent, setLoadedContent] = useState(null);
-  const [loadContentId, setLoadContentId] = useState('');
   const [submitError, setSubmitError] = useState('');
 
   const navigate = useNavigate();
@@ -74,7 +74,6 @@ export default function Publicar() {
 
   useEffect(() => {
     if (paramContentId) {
-      setLoadContentId(paramContentId);
       loadContent(paramContentId);
     }
   }, [paramContentId]);
@@ -99,11 +98,7 @@ export default function Publicar() {
   };
 
   const loadContent = async (id) => {
-    if (!id) {
-      return;
-    }
-
-    setIsLoadingContent(true);
+    if (!id) return;
 
     try {
       const response = await contentsApi.getById(id);
@@ -124,17 +119,16 @@ export default function Publicar() {
       setPosterPreview(coverUrl || null);
     } catch (error) {
       console.error('Não foi possível carregar o conteúdo.', error);
-    } finally {
-      setIsLoadingContent(false);
     }
   };
 
   const clearLoadedContent = () => {
     setLoadedContent(null);
-    setLoadContentId('');
     setPosterFile(null);
     setPosterPreview(null);
+    setSubmitError('');
     reset(defaultValues);
+    navigate('/painel/publicar');
   };
 
   const onSubmit = (data) => {
@@ -157,22 +151,20 @@ export default function Publicar() {
     try {
       let coverUrl = null;
 
-      // Se houver arquivo de imagem, fazer upload
       if (posterFile) {
         const imageForm = new FormData();
         imageForm.append('file', posterFile);
-        
+
         const imageResp = await uploadsApi.uploadImage(imageForm, {
           onUploadProgress: (evt) => {
             const percent = Math.round((evt.loaded * 100) / (evt.total || 1));
             setUploadProgress(percent);
           },
         });
-        
+
         coverUrl = imageResp.data?.url;
       }
 
-      // Preparar dados do conteúdo
       const contentData = {
         title: pendingContent.title,
         typeContent: pendingContent.typeContent,
@@ -186,17 +178,12 @@ export default function Publicar() {
       if (coverUrl) {
         contentData.coverUrl = coverUrl;
       } else if (loadedContent) {
-        // Edição sem novo cartaz: manter o coverUrl já existente
-        // (o backend exige o campo, mesmo que não tenha mudado).
         contentData.coverUrl = loadedContent.coverUrl;
       }
 
-      // Criar ou atualizar conteúdo (JSON apenas)
       if (loadedContent) {
         await contentsApi.update(loadedContent.id, contentData);
       } else {
-        // Toda publicação nova fica PENDING até o administrador validar;
-        // o backend precisa de saber qual estúdio/grupo é o autor.
         await contentsApi.create({ ...contentData, ownerId: user?.id });
       }
 
@@ -244,41 +231,10 @@ export default function Publicar() {
         </p>
       </div>
 
-      <Card className="mb-8 space-y-6">
-        <CardHeader className="space-y-3">
-          <CardTitle>Editar publicação existente</CardTitle>
-          <p className="text-sm text-muted">Carregue o ID do conteúdo para atualizar ou excluir a publicação.</p>
-        </CardHeader>
-
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-[1fr_auto] items-end">
-            <div>
-              <label className="text-sm font-medium">ID do Conteúdo</label>
-              <input
-                value={loadContentId}
-                onChange={(event) => setLoadContentId(event.target.value)}
-                placeholder="Cole o ID do conteúdo aqui"
-                className="mt-2 h-11 w-full rounded-md border border-white/10 bg-surface px-3 text-sm text-text transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              />
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Button type="button" onClick={() => loadContent(loadContentId)} isLoading={isLoadingContent} disabled={!loadContentId}>
-                Carregar
-              </Button>
-              {loadedContent && (
-                <Button type="button" variant="secondary" onClick={clearLoadedContent} disabled={isLoadingContent}>
-                  Nova publicação
-                </Button>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       <div className="grid gap-8 xl:grid-cols-[1.5fr_1fr]">
         <Card className="space-y-6">
           <CardHeader className="space-y-3">
-              <CardTitle>{loadedContent ? 'Editar Conteúdo' : 'Formulário de Conteúdo'}</CardTitle>
+            <CardTitle>{loadedContent ? 'Editar Conteúdo' : 'Formulário de Conteúdo'}</CardTitle>
             <p className="text-sm text-muted">Preencha todos os campos obrigatórios antes de enviar.</p>
           </CardHeader>
 
@@ -393,9 +349,14 @@ export default function Publicar() {
 
               <div className="flex flex-col gap-3">
                 {loadedContent && (
-                  <Button variant="outline" type="button" onClick={handleDelete} isLoading={isSubmitting}>
-                    Excluir Publicação
-                  </Button>
+                  <>
+                    <Button variant="secondary" type="button" onClick={clearLoadedContent} disabled={isSubmitting}>
+                      Nova publicação
+                    </Button>
+                    <Button variant="outline" type="button" onClick={handleDelete} isLoading={isSubmitting}>
+                      Excluir Publicação
+                    </Button>
+                  </>
                 )}
                 <Button type="submit" className="w-full" isLoading={isSubmitting}>
                   {loadedContent ? 'Salvar Alterações' : 'Verificar e Publicar'}
