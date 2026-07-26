@@ -2,7 +2,6 @@ package ao.com.luandaaudiovisual.lua.service;
 
 import java.util.List;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +20,11 @@ import ao.com.luandaaudiovisual.lua.repository.UserRepository;
 public class UserService {
 
     private final UserRepository repository;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserProfileResponse saveUser(UserRegistrationRequest dto) {
