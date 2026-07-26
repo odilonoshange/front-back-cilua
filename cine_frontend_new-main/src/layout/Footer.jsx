@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 export const Footer = () => {
   return (
     <footer className="relative mt-auto overflow-hidden border-t border-white/10 bg-surface">
-      <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 opacity-[0.05] afro-grid" />
+      <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 text-accent opacity-[0.05] afro-pattern" />
+      <div className="pointer-events-none absolute -left-16 bottom-0 h-48 w-48 text-terracotta opacity-[0.04] afro-grid" />
       <div className="relative mx-auto max-w-7xl px-5 py-14 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
