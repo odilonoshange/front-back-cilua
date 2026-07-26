@@ -5,16 +5,23 @@
 @layer base {
   body {
     @apply bg-background text-text font-sans antialiased;
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(217, 133, 43, 0.08), transparent 28%),
+      radial-gradient(circle at 90% 30%, rgba(185, 79, 50, 0.06), transparent 24%);
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight;
   }
+
+  ::selection {
+    @apply bg-accent text-background;
+  }
 }
 
 @layer components {
   .glass-panel {
-    @apply border border-white/10 bg-surface/80 backdrop-blur-md;
+    @apply border border-white/10 bg-surface/90 backdrop-blur-md;
   }
 
   .cinematic-gradient {
@@ -27,6 +34,22 @@
       linear-gradient(-45deg, transparent 42%, currentColor 43%, currentColor 48%, transparent 49%);
     background-size: 34px 34px;
   }
+
+  .afro-pattern {
+    background-image:
+      radial-gradient(circle at 25% 25%, currentColor 0 2px, transparent 2.5px),
+      linear-gradient(45deg, transparent 46%, currentColor 47%, currentColor 53%, transparent 54%);
+    background-size: 18px 18px, 36px 36px;
+  }
+
+  .section-rule {
+    @apply relative pl-4;
+  }
+
+  .section-rule::before {
+    content: '';
+    @apply absolute left-0 top-1 bottom-1 w-1 bg-accent;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -35,14 +58,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #11100e;
+  background: #17110d;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #514a3f;
+  background: #6f5543;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #e0a83e;
+  background: #d9822b;
 }
