@@ -15,13 +15,13 @@ const ButtonComponent = ({
   'aria-label': ariaLabel,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50';
-  
+  const baseStyles = 'inline-flex items-center justify-center rounded-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50';
+
   const variants = {
-    primary: 'bg-primary text-white hover:bg-primary/90',
+    primary: 'bg-primary text-background hover:bg-accent hover:-translate-y-0.5 shadow-sm',
     secondary: 'bg-secondary text-text hover:bg-secondary/80 border border-white/10',
     outline: 'border border-primary text-primary hover:bg-primary/10',
-    ghost: 'hover:bg-white/10 hover:text-white',
+    ghost: 'hover:bg-white/5 hover:text-white',
   };
 
   const sizes = {
