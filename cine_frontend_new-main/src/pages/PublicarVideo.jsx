@@ -62,9 +62,6 @@ export default function PublicarVideo() {
   }, [posterPreview, videoPreview]);
 
   useEffect(() => {
-    // Quando se chega aqui a partir de "Upload Vídeo" num card do painel,
-    // o ID já vem preenchido — buscamos a data real gravada no conteúdo
-    // para evitar que o utilizador reescreva à mão e engane a pré-visualização.
     if (!routeContentId) return;
     contentsApi
       .getById(routeContentId)
@@ -128,15 +125,11 @@ export default function PublicarVideo() {
   };
 
   const handleUpload = async () => {
-    // New flow: upload image and video to external service, obtain URLs,
-    // then update the Content via contentsApi.update with URLs only.
     if (!pendingData) return;
     setIsSubmitting(true);
     setSubmitError('');
 
     try {
-      // Simulate external upload calls using uploadsApi (which still uses multipart)
-      // In real flow, integrate Cloudinary / external provider here and obtain URLs.
       const imageForm = new FormData();
       imageForm.append('file', posterFile);
       const imageResp = await uploadsApi.uploadImage(imageForm, {
@@ -157,16 +150,12 @@ export default function PublicarVideo() {
       });
       const videoUrl = videoResp.data?.url;
 
-      // Update content with obtained URLs only
       await contentsApi.updateVideo(pendingData.contentId, videoUrl, imageUrl);
 
       setIsConfirmationOpen(false);
       navigate('/painel');
     } catch (error) {
       console.error('Erro ao carregar mídia.', error);
-      // Antes este erro só ia para a consola — o botão parecia simplesmente
-      // "não funcionar". Agora mostramos o motivo real (ex.: a data do
-      // conteúdo ainda não chegou, ID inválido, etc.).
       const data = error.response?.data;
       const message =
         (typeof data === 'string' && data.trim()) ||
@@ -186,7 +175,6 @@ export default function PublicarVideo() {
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold">Upload de Vídeo do Conteúdo</h1>
-          <p className="text-sm text-muted mt-2 max-w-2xl">Faça upload do cartaz PNG e do vídeo MP4 via Cloudinary e atualize o conteúdo existente.</p>
         </div>
         <Link to="/painel/publicar" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-surface px-4 py-2 text-sm text-text hover:bg-white/5 transition-colors">
           <ArrowLeft size={16} /> Voltar ao formulário de conteúdo
@@ -198,7 +186,7 @@ export default function PublicarVideo() {
           <CardHeader className="space-y-3">
             <CardTitle>Dados de Upload</CardTitle>
             <p className="text-sm text-muted">
-              {contentTitle ? `Conteúdo: ${contentTitle}` : 'Informe o ID do conteúdo e selecione os ficheiros válidos.'}
+              {contentTitle ? `Conteúdo: ${contentTitle}` : 'Selecione os ficheiros válidos.'}
             </p>
           </CardHeader>
 
@@ -329,7 +317,7 @@ export default function PublicarVideo() {
 
       <Modal isOpen={isConfirmationOpen} onClose={() => setIsConfirmationOpen(false)} title="Confirmar upload">
         <div className="space-y-4 text-sm text-text">
-          <p>Confirme o upload dos ficheiros para o conteúdo especificado. Esta ação enviará o PNG e o MP4 via Cloudinary para o backend.</p>
+          <p>Confirme o upload dos ficheiros para o conteúdo especificado.</p>
 
           <div className="rounded-2xl border border-white/10 bg-surface p-4">
             <p className="text-xs uppercase tracking-[0.3em] text-muted">Conteúdo</p>
