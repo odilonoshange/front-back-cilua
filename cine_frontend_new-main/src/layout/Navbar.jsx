@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Film, User, Menu, Search, LogOut } from 'lucide-react';
+import { Film, User, Menu, Search, LogOut, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../ui/Button';
 import { USER_TYPE, isProducerRole } from '../constants/enums';
@@ -8,67 +8,62 @@ export const Navbar = ({ onMenuClick }) => {
   const { isAuthenticated, user, logout } = useAuth();
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-6">
-          <button 
-            className="block lg:hidden text-white/70 hover:text-white"
+    <nav className="sticky top-0 z-40 w-full border-b border-white/10 bg-background/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-12">
+        <div className="flex items-center gap-7">
+          <button
+            className="rounded-sm p-2 text-white/70 transition hover:bg-white/5 hover:text-accent lg:hidden"
             onClick={onMenuClick}
+            aria-label="Abrir menu"
           >
-            <Menu size={24} />
+            <Menu size={22} />
           </button>
-          
-          <Link to="/" className="flex items-center gap-2 text-primary">
-            <Film size={28} />
-            <span className="font-display text-xl font-bold tracking-tight text-white hidden sm:block">
-              Cine <span className="text-primary">Teatro</span>
+
+          <Link to="/" className="group flex items-center gap-3">
+            <span className="relative flex h-10 w-10 items-center justify-center border border-accent/50 bg-accent text-background transition group-hover:rotate-45">
+              <Film size={21} className="transition group-hover:-rotate-45" />
+            </span>
+            <span className="hidden font-display text-xl font-black tracking-[-0.04em] text-white sm:block">
+              Cine <span className="text-accent">Teatro</span>
             </span>
           </Link>
-          
-          <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-white/70">
-            <Link to="/" className="hover:text-white transition-colors">Início</Link>
-            <Link to="/explorar" className="hover:text-white transition-colors">Explorar</Link>
+
+          <div className="hidden items-center gap-7 lg:flex">
+            <Link to="/" className="text-sm font-semibold text-white/70 transition hover:text-accent">Início</Link>
+            <Link to="/explorar" className="text-sm font-semibold text-white/70 transition hover:text-accent">Explorar</Link>
             {isAuthenticated && isProducerRole(user?.role) && (
-              <Link to="/painel/publicar" className="hover:text-white transition-colors">Publicar</Link>
+              <Link to="/painel/publicar" className="text-sm font-semibold text-white/70 transition hover:text-accent">Publicar</Link>
             )}
             {isAuthenticated && isProducerRole(user?.role) && (
-              <Link to="/painel/publicar-video" className="hover:text-white transition-colors">Upload</Link>
+              <Link to="/painel/publicar-video" className="text-sm font-semibold text-white/70 transition hover:text-accent">Exibição</Link>
             )}
             {isAuthenticated && user?.role === USER_TYPE.ADMIN && (
-              <Link to="/admin" className="hover:text-white transition-colors">Administração</Link>
+              <Link to="/admin" className="text-sm font-semibold text-white/70 transition hover:text-accent">Administração</Link>
             )}
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <button className="text-white/70 hover:text-white transition-colors">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Link to="/explorar" className="rounded-sm p-2 text-white/60 transition hover:bg-white/5 hover:text-accent" aria-label="Pesquisar">
             <Search size={20} />
-          </button>
+          </Link>
 
           {isAuthenticated ? (
-            <div className="flex items-center gap-4">
-              <Link to={isProducerRole(user?.role) ? '/painel' : '/perfil'} className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface border border-white/10">
+            <div className="flex items-center gap-3">
+              <Link to={isProducerRole(user?.role) ? '/painel' : '/perfil'} className="group flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full border border-accent/30 bg-surface text-accent transition group-hover:border-accent">
                   <User size={16} />
                 </div>
-                <span className="hidden sm:block">{user?.name}</span>
+                <span className="hidden max-w-32 truncate text-sm font-semibold text-white/80 transition group-hover:text-accent sm:block">{user?.name}</span>
               </Link>
-              <button 
-                onClick={logout}
-                className="text-muted hover:text-red-500 transition-colors"
-                title="Sair"
-              >
-                <LogOut size={20} />
+              <button onClick={logout} className="rounded-sm p-2 text-white/40 transition hover:bg-white/5 hover:text-terracotta" title="Sair" aria-label="Sair">
+                <LogOut size={19} />
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-3">
-              <Link to="/entrar">
-                <Button variant="ghost" size="sm">Entrar</Button>
-              </Link>
-              <Link to="/registar">
-                <Button size="sm">Registar</Button>
-              </Link>
+            <div className="flex items-center gap-2">
+              <Link to="/entrar"><Button variant="ghost" size="sm">Entrar</Button></Link>
+              <Link to="/registar"><Button size="sm">Registar</Button></Link>
             </div>
           )}
         </div>
