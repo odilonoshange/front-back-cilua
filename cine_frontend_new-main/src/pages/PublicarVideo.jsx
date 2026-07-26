@@ -43,7 +43,6 @@ export default function PublicarVideo() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      contentId: routeContentId || '',
       eventDate: '',
     },
   });
@@ -68,12 +67,12 @@ export default function PublicarVideo() {
       .then((response) => {
         setContentTitle(response.data?.title || '');
         if (response.data?.eventDate) {
-          reset({ contentId: routeContentId, eventDate: response.data.eventDate.split('T')[0] });
+          reset({ eventDate: response.data.eventDate.split('T')[0] });
         }
       })
       .catch((err) => {
         console.error('Não foi possível carregar o conteúdo.', err);
-        setSubmitError('Não foi encontrado nenhum conteúdo com esse ID.');
+        setSubmitError('Não foi possível carregar o conteúdo selecionado.');
       });
   }, [routeContentId, reset]);
 
@@ -110,6 +109,11 @@ export default function PublicarVideo() {
   };
 
   const onSubmit = (data) => {
+    if (!routeContentId) {
+      setSubmitError('Selecione um conteúdo existente para adicionar o vídeo.');
+      return;
+    }
+
     if (!posterFile) {
       setError('poster', { type: 'required', message: 'Cartaz em PNG obrigatório.' });
       return;
@@ -125,7 +129,7 @@ export default function PublicarVideo() {
   };
 
   const handleUpload = async () => {
-    if (!pendingData) return;
+    if (!pendingData || !routeContentId) return;
     setIsSubmitting(true);
     setSubmitError('');
 
@@ -150,7 +154,7 @@ export default function PublicarVideo() {
       });
       const videoUrl = videoResp.data?.url;
 
-      await contentsApi.updateVideo(pendingData.contentId, videoUrl, imageUrl);
+      await contentsApi.updateVideo(routeContentId, videoUrl, imageUrl);
 
       setIsConfirmationOpen(false);
       navigate('/painel');
@@ -161,7 +165,7 @@ export default function PublicarVideo() {
         (typeof data === 'string' && data.trim()) ||
         data?.message ||
         (error.response?.status === 404
-          ? 'Não foi encontrado nenhum conteúdo com esse ID.'
+          ? 'Não foi possível localizar o conteúdo selecionado.'
           : 'Não foi possível concluir o upload. Tente novamente.');
       setSubmitError(message);
     } finally {
@@ -174,17 +178,17 @@ export default function PublicarVideo() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Upload de Vídeo do Conteúdo</h1>
+          <h1 className="text-3xl font-bold">Adicionar Vídeo ao Conteúdo</h1>
         </div>
-        <Link to="/painel/publicar" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-surface px-4 py-2 text-sm text-text hover:bg-white/5 transition-colors">
-          <ArrowLeft size={16} /> Voltar ao formulário de conteúdo
+        <Link to="/painel" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-surface px-4 py-2 text-sm text-text hover:bg-white/5 transition-colors">
+          <ArrowLeft size={16} /> Voltar
         </Link>
       </div>
 
       <div className="grid gap-8 xl:grid-cols-[1.4fr_1fr]">
         <Card className="space-y-6">
           <CardHeader className="space-y-3">
-            <CardTitle>Dados de Upload</CardTitle>
+            <CardTitle>Ficheiros do Conteúdo</CardTitle>
             <p className="text-sm text-muted">
               {contentTitle ? `Conteúdo: ${contentTitle}` : 'Selecione os ficheiros válidos.'}
             </p>
@@ -198,20 +202,11 @@ export default function PublicarVideo() {
             )}
             <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
               <Input
-                label="ID do Conteúdo"
-                placeholder="123456"
-                error={errors.contentId?.message}
-                {...register('contentId', {
-                  required: 'O ID do conteúdo é obrigatório.',
-                })}
-              />
-
-              <Input
-                label="Data do Conteúdo"
+                label="Data de Exibição"
                 type="date"
                 error={errors.eventDate?.message}
                 {...register('eventDate', {
-                  required: 'A data do conteúdo é obrigatória.',
+                  required: 'A data de exibição é obrigatória.',
                 })}
               />
 
@@ -248,19 +243,19 @@ export default function PublicarVideo() {
 
         <Card className="space-y-6">
           <CardHeader className="space-y-3">
-            <CardTitle>Pré-visualização de Upload</CardTitle>
-            <p className="text-sm text-muted">Veja o estado dos ficheiros e o desbloqueio do streaming.</p>
+            <CardTitle>Pré-visualização</CardTitle>
+            <p className="text-sm text-muted">Veja o estado dos ficheiros e a disponibilidade da exibição.</p>
           </CardHeader>
 
           <CardContent className="space-y-4">
             <div className="space-y-3 rounded-3xl border border-white/10 bg-background p-4">
               <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-surface px-4 py-3">
                 <div>
-                  <p className="text-sm text-muted">Data do conteúdo</p>
+                  <p className="text-sm text-muted">Data de exibição</p>
                   <p className="text-base font-semibold">{formatDateLabel(watchEventDate)}</p>
                 </div>
                 <span className={`rounded-full px-3 py-1 text-xs font-semibold ${isStreamAvailable ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/15 text-amber-300'}`}>
-                  {isStreamAvailable ? 'Streaming disponível' : 'Streaming bloqueado'}
+                  {isStreamAvailable ? 'Exibição disponível' : 'Disponível após a data'}
                 </span>
               </div>
 
@@ -291,7 +286,7 @@ export default function PublicarVideo() {
                         <video controls className="w-full rounded-2xl bg-black" src={videoPreview} />
                       ) : (
                         <div className="mt-3 flex h-48 items-center justify-center rounded-2xl border border-dashed border-white/10 bg-background px-4 text-center text-sm text-muted">
-                          Streaming ficará disponível somente após <strong>{formatDateLabel(watchEventDate)}</strong>.
+                          A exibição online ficará disponível após <strong>{formatDateLabel(watchEventDate)}</strong>.
                         </div>
                       )}
                     </div>
@@ -315,14 +310,14 @@ export default function PublicarVideo() {
         </Card>
       </div>
 
-      <Modal isOpen={isConfirmationOpen} onClose={() => setIsConfirmationOpen(false)} title="Confirmar upload">
+      <Modal isOpen={isConfirmationOpen} onClose={() => setIsConfirmationOpen(false)} title="Confirmar envio">
         <div className="space-y-4 text-sm text-text">
-          <p>Confirme o upload dos ficheiros para o conteúdo especificado.</p>
+          <p>Confirme o envio dos ficheiros para o conteúdo selecionado.</p>
 
           <div className="rounded-2xl border border-white/10 bg-surface p-4">
             <p className="text-xs uppercase tracking-[0.3em] text-muted">Conteúdo</p>
-            <p className="mt-1 text-base font-semibold">{pendingData?.contentId}</p>
-            <p className="mt-1 text-sm text-muted">Data do conteúdo: {formatDateLabel(pendingData?.eventDate)}</p>
+            <p className="mt-1 text-base font-semibold">{contentTitle || 'Conteúdo selecionado'}</p>
+            <p className="mt-1 text-sm text-muted">Data de exibição: {formatDateLabel(pendingData?.eventDate)}</p>
             <p className="mt-2 text-sm">Cartaz: {posterFile?.name ?? 'Nenhum'}</p>
             <p className="text-sm">Vídeo: {videoFile?.name ?? 'Nenhum'}</p>
           </div>
@@ -339,7 +334,7 @@ export default function PublicarVideo() {
             Cancelar
           </Button>
           <Button onClick={handleUpload} isLoading={isSubmitting}>
-            Confirmar Upload
+            Confirmar Envio
           </Button>
         </div>
       </Modal>
