@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
+    window.location.replace('/');
   };
 
   const value = {

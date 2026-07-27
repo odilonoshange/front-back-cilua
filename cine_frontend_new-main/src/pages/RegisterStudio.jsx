@@ -8,106 +8,27 @@ import { useAuth } from '../hooks/useAuth';
 
 export default function RegisterStudio() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const { registerStudio } = useAuth();
   const navigate = useNavigate();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: '',
-      nif: '',
-      phone: '',
-      email: '',
-      password: '',
-    },
-  });
+  const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: { name: '', nif: '', phone: '', email: '', password: '' } });
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
+    setSubmitError('');
     try {
       await registerStudio(data);
-      // Redirecionar para o painel de estúdio
       navigate('/painel');
     } catch (error) {
       console.error('Erro ao registar estúdio.', error);
+      const message = error?.response?.data?.message || '';
+      setSubmitError(message.includes('Duplicate entry') || message.includes('uk_users_email')
+        ? 'Este e-mail já está registado. Por favor, utilize outro e-mail ou faça login.'
+        : (message || 'Não foi possível concluir o registo. Tente novamente.'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  return (
-    <div className="flex flex-1 items-center justify-center p-4 py-12">
-      <Card className="w-full max-w-lg border-primary/20">
-        <CardHeader className="text-center">
-          <span className="mb-2 mx-auto inline-block rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold text-primary">Conta Estúdio</span>
-          <CardTitle>Registo de Produtor/Estúdio</CardTitle>
-          <p className="text-sm text-muted mt-2">Publique os seus conteúdos na plataforma.</p>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-2 gap-4">
-              <Input
-                label="Nome da Empresa/Estúdio"
-                placeholder="Angola Produções"
-                className="col-span-2"
-                error={errors.name?.message}
-                {...register('name', { required: 'O nome é obrigatório' })}
-              />
-              <Input
-                label="NIF"
-                placeholder="000000000"
-                error={errors.nif?.message}
-                {...register('nif', { 
-                  required: 'NIF é obrigatório',
-                  minLength: { value: 9, message: 'NIF inválido' }
-                })}
-              />
-              <Input
-                label="Telefone"
-                placeholder="+244 9XX XXX XXX"
-                error={errors.phone?.message}
-                {...register('phone', { required: 'Telefone é obrigatório' })}
-              />
-              <Input
-                label="Email Profissional"
-                type="email"
-                placeholder="contacto@estudio.co.ao"
-                className="col-span-2"
-                error={errors.email?.message}
-                {...register('email', { 
-                  required: 'O email é obrigatório',
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Endereço de email inválido'
-                  }
-                })}
-              />
-              <Input
-                label="Palavra-passe"
-                type="password"
-                placeholder="••••••••"
-                className="col-span-2"
-                error={errors.password?.message}
-                {...register('password', { 
-                  required: 'A palavra-passe é obrigatória',
-                  minLength: { value: 6, message: 'Mínimo 6 caracteres' }
-                })}
-              />
-            </div>
-            <Button type="submit" className="w-full mt-6" isLoading={isSubmitting}>
-              Solicitar Registo
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter className="justify-center border-t border-white/5 mt-2">
-          <p className="text-sm text-muted">
-            Já tem uma conta? <Link to="/entrar" className="text-primary hover:underline">Entrar</Link>
-          </p>
-        </CardFooter>
-      </Card>
-    </div>
-  );
+  return <div className="relative flex flex-1 items-center justify-center overflow-hidden px-5 py-12 sm:px-8"><div className="pointer-events-none absolute left-0 top-0 h-full w-1/2 opacity-[0.035] afro-grid text-accent" /><div className="relative w-full max-w-lg"><div className="mb-8 text-center"><p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-accent">Cine Teatro · Criadores</p><h1 className="text-3xl font-black tracking-tight">Registo de produtor ou estúdio</h1><p className="mt-3 text-sm text-muted">Apresente as suas produções no catálogo de cinema e teatro.</p></div><Card><CardHeader><CardTitle>Dados profissionais</CardTitle></CardHeader><CardContent>{submitError && <div className="mb-5 border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{submitError}</div>}<form className="space-y-5" onSubmit={handleSubmit(onSubmit)}><Input label="Nome da empresa/estúdio" placeholder="Angola Produções" error={errors.name?.message} {...register('name', { required: 'O nome é obrigatório' })} /><div className="grid gap-4 sm:grid-cols-2"><Input label="NIF" placeholder="000000000" error={errors.nif?.message} {...register('nif', { required: 'NIF é obrigatório', minLength: { value: 9, message: 'NIF inválido' } })} /><Input label="Telefone" placeholder="+244 9XX XXX XXX" error={errors.phone?.message} {...register('phone', { required: 'Telefone é obrigatório' })} /></div><Input label="Email profissional" type="email" placeholder="contacto@estudio.co.ao" error={errors.email?.message} {...register('email', { required: 'O email é obrigatório', pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: 'Endereço de email inválido' } })} /><Input label="Palavra-passe" type="password" placeholder="••••••••" error={errors.password?.message} {...register('password', { required: 'A palavra-passe é obrigatória', minLength: { value: 6, message: 'Mínimo 6 caracteres' } })} /><Button type="submit" className="w-full" isLoading={isSubmitting}>Solicitar registo</Button></form></CardContent><CardFooter className="justify-center border-t border-white/10"><p className="text-sm text-muted">Já tem uma conta? <Link to="/entrar" className="font-semibold text-accent hover:underline">Entrar</Link></p></CardFooter></Card></div></div>;
 }

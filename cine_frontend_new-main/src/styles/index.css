@@ -5,36 +5,83 @@
 @layer base {
   body {
     @apply bg-background text-text font-sans antialiased;
+    background-image:
+      radial-gradient(circle at 8% 0%, rgba(217, 133, 43, 0.08), transparent 25%),
+      radial-gradient(circle at 92% 28%, rgba(185, 79, 50, 0.06), transparent 22%);
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight;
   }
+
+  ::selection {
+    @apply bg-accent text-background;
+  }
 }
 
 @layer components {
-  /* Custom utility classes that we might need globally */
   .glass-panel {
-    @apply bg-surface/80 backdrop-blur-md border border-white/10;
+    @apply border border-white/10 bg-surface/90 backdrop-blur-md;
   }
-  
+
   .cinematic-gradient {
     @apply bg-gradient-to-t from-background via-background/80 to-transparent;
   }
+
+  /* Geometria inspirada em padrões têxteis africanos, usada de forma discreta
+     para reforçar identidade sem competir com fotografia e cinema. */
+  .afro-grid {
+    background-image:
+      linear-gradient(30deg, currentColor 12%, transparent 12.5%, transparent 87%, currentColor 87.5%, currentColor),
+      linear-gradient(150deg, currentColor 12%, transparent 12.5%, transparent 87%, currentColor 87.5%, currentColor),
+      linear-gradient(30deg, currentColor 12%, transparent 12.5%, transparent 87%, currentColor 87.5%, currentColor),
+      linear-gradient(150deg, currentColor 12%, transparent 12.5%, transparent 87%, currentColor 87.5%, currentColor),
+      linear-gradient(60deg, transparent 42%, currentColor 43%, currentColor 57%, transparent 58%),
+      linear-gradient(120deg, transparent 42%, currentColor 43%, currentColor 57%, transparent 58%);
+    background-position: 0 0, 0 0, 18px 31px, 18px 31px, 0 0, 0 0;
+    background-size: 36px 62px;
+  }
+
+  .afro-pattern {
+    background-image:
+      radial-gradient(circle at center, currentColor 0 1.5px, transparent 2px),
+      linear-gradient(45deg, transparent 43%, currentColor 44%, currentColor 48%, transparent 49%),
+      linear-gradient(-45deg, transparent 43%, currentColor 44%, currentColor 48%, transparent 49%);
+    background-size: 20px 20px, 40px 40px, 40px 40px;
+    background-position: 0 0, 0 0, 20px 20px;
+  }
+
+  .afro-diamond-pattern {
+    background-image:
+      linear-gradient(45deg, transparent 46%, currentColor 47%, currentColor 53%, transparent 54%),
+      linear-gradient(-45deg, transparent 46%, currentColor 47%, currentColor 53%, transparent 54%);
+    background-size: 28px 28px;
+  }
+
+  .section-rule {
+    @apply relative pl-4;
+  }
+
+  .section-rule::before {
+    content: '';
+    @apply absolute left-0 top-1 bottom-1 w-1 bg-accent;
+  }
 }
 
-/* Custom Scrollbar for a premium feel */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #17110d;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #6f5543;
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #E50914;
+  background: #d9822b;
 }

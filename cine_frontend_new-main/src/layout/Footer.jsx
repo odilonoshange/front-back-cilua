@@ -3,55 +3,55 @@ import { Link } from 'react-router-dom';
 
 export const Footer = () => {
   return (
-    <footer className="border-t border-white/10 bg-surface/50 py-12 mt-auto">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div className="col-span-1 md:col-span-2">
-            <Link to="/" className="flex items-center gap-2 text-primary mb-4">
-              <Film size={28} />
-              <span className="font-display text-xl font-bold tracking-tight text-white">
-                Cine <span className="text-primary">Teatro</span>
+    <footer className="relative mt-auto overflow-hidden border-t border-white/10 bg-surface">
+      <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 text-accent opacity-[0.05] afro-pattern" />
+      <div className="pointer-events-none absolute -left-16 bottom-0 h-48 w-48 text-terracotta opacity-[0.04] afro-grid" />
+      <div className="relative mx-auto max-w-7xl px-5 py-14 sm:px-8 lg:px-12">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
+          <div className="md:col-span-2">
+            <Link to="/" className="group mb-5 flex w-fit items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center bg-accent text-background transition group-hover:rotate-45">
+                <Film size={21} className="transition group-hover:-rotate-45" />
+              </span>
+              <span className="font-display text-xl font-black tracking-[-0.04em] text-white">
+                Cine <span className="text-accent">Teatro</span>
               </span>
             </Link>
-            <p className="text-sm text-muted max-w-sm mb-6">
-              A principal plataforma para exibição e divulgação de conteúdos cinematográficos e teatrais angolanos em Luanda.
+            <p className="max-w-md text-sm leading-6 text-muted">
+              Um espaço dedicado ao cinema e ao teatro angolano. Descubra obras, conheça os seus criadores e acompanhe histórias que nascem em Angola.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="text-muted hover:text-white transition-colors">
-                <Instagram size={20} />
-              </a>
-              <a href="#" className="text-muted hover:text-white transition-colors">
-                <Facebook size={20} />
-              </a>
-              <a href="#" className="text-muted hover:text-white transition-colors">
-                <Twitter size={20} />
-              </a>
+            <div className="mt-6 flex gap-2">
+              {[Instagram, Facebook, Twitter].map((Icon, index) => (
+                <a key={index} href="#" className="flex h-9 w-9 items-center justify-center border border-white/10 text-muted transition hover:border-accent/50 hover:bg-accent hover:text-background" aria-label="Rede social">
+                  <Icon size={17} />
+                </a>
+              ))}
             </div>
           </div>
-          
+
           <div>
-            <h4 className="font-semibold mb-4">Links Úteis</h4>
-            <ul className="space-y-2 text-sm text-muted">
-              <li><Link to="/explorar" className="hover:text-white transition-colors">Explorar Catálogo</Link></li>
-              <li><Link to="/registar-estudio" className="hover:text-white transition-colors">Para Estúdios</Link></li>
-              <li><a href="#" className="hover:text-white transition-colors">Sobre Nós</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contactos</a></li>
+            <h4 className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-accent">Explorar</h4>
+            <ul className="space-y-3 text-sm text-muted">
+              <li><Link to="/explorar" className="transition hover:text-white">Catálogo</Link></li>
+              <li><Link to="/registar-estudio" className="transition hover:text-white">Para produtores</Link></li>
+              <li><a href="#" className="transition hover:text-white">Sobre o projeto</a></li>
+              <li><a href="#" className="transition hover:text-white">Contactos</a></li>
             </ul>
           </div>
-          
+
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
-            <ul className="space-y-2 text-sm text-muted">
-              <li><a href="#" className="hover:text-white transition-colors">Termos de Uso</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Política de Privacidade</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Cookies</a></li>
+            <h4 className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-accent">Informação</h4>
+            <ul className="space-y-3 text-sm text-muted">
+              <li><a href="#" className="transition hover:text-white">Termos de uso</a></li>
+              <li><a href="#" className="transition hover:text-white">Privacidade</a></li>
+              <li><a href="#" className="transition hover:text-white">Cookies</a></li>
             </ul>
           </div>
         </div>
-        
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-muted">
+
+        <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-7 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>&copy; {new Date().getFullYear()} Cine Teatro. Todos os direitos reservados.</p>
-          <p className="mt-2 md:mt-0">Feito com ❤️ em Luanda</p>
+          <p>Luanda · Angola</p>
         </div>
       </div>
     </footer>

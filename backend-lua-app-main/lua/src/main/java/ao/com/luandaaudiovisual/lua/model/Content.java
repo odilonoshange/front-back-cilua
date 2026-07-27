@@ -1,6 +1,17 @@
 package ao.com.luandaaudiovisual.lua.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,46 +20,58 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
-
 @Entity
-@Table(name = "content")
+@Table(name = "contents")
 @Getter
 @Setter
 @NoArgsConstructor
 public class Content {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "type_content", nullable = false)
     private TypeContent typeContent;
+
+    @Column(nullable = false)
     private String title;
+
     private String description;
-    // Descrição completa/detalhada (distinta da sinopse curta em "description").
+
     @Column(columnDefinition = "TEXT")
     private String details;
+
+    @Column(nullable = false, length = 100)
     private String category;
-    @Column(nullable = true)
+
+    @Column(name = "video_url", length = 500)
     private String videoUrl;
-    @Column(nullable = false)
+
+    @Column(name = "cover_url", nullable = false, length = 500)
     private String coverUrl;
-    @OneToMany(mappedBy="content")
+
+    @OneToMany(mappedBy = "content")
     private List<Review> reviews;
+
+    @Column(name = "event_date")
     private LocalDate eventDate;
+
+    @Column(name = "event_location")
     private String eventLocation;
 
-    // Estúdio/grupo autor da publicação.
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
-    // Fluxo de moderação: toda publicação nasce PENDING e só fica visível
-    // ao público em geral depois de o administrador aprovar.
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ContentStatus status = ContentStatus.PENDING;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "rejection_reason", columnDefinition = "TEXT")
     private String rejectionReason;
 
+    @Column(name = "reviewed_at")
     private LocalDateTime reviewedAt;
 }
