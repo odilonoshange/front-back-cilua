@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Film, User, Menu, Search, LogOut } from 'lucide-react';
+import { Menu, Search, LogOut } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../ui/Button';
 import { USER_TYPE, isProducerRole } from '../constants/enums';
@@ -16,14 +16,11 @@ export const Navbar = ({ onMenuClick }) => {
             onClick={onMenuClick}
             aria-label="Abrir menu"
           >
-            <Menu size={22} />
+            <Menu size={22} strokeWidth={1.8} />
           </button>
 
-          <Link to="/" className="group flex items-center gap-3">
-            <span className="relative flex h-10 w-10 items-center justify-center border border-accent/50 bg-accent text-background transition group-hover:rotate-45">
-              <Film size={21} className="transition group-hover:-rotate-45" />
-            </span>
-            <span className="hidden font-display text-xl font-black tracking-[-0.04em] text-white sm:block">
+          <Link to="/" className="group flex items-center">
+            <span className="font-display text-[1.65rem] font-black leading-none tracking-[-0.075em] text-white sm:text-[1.9rem]">
               Cine <span className="text-accent">Teatro</span>
             </span>
           </Link>
@@ -34,9 +31,6 @@ export const Navbar = ({ onMenuClick }) => {
             {isAuthenticated && isProducerRole(user?.role) && (
               <Link to="/painel/publicar" className="text-sm font-semibold text-white/70 transition hover:text-accent">Publicar</Link>
             )}
-            {isAuthenticated && isProducerRole(user?.role) && (
-              <Link to="/painel/publicar-video" className="text-sm font-semibold text-white/70 transition hover:text-accent">Exibição</Link>
-            )}
             {isAuthenticated && user?.role === USER_TYPE.ADMIN && (
               <Link to="/admin" className="text-sm font-semibold text-white/70 transition hover:text-accent">Administração</Link>
             )}
@@ -45,19 +39,19 @@ export const Navbar = ({ onMenuClick }) => {
 
         <div className="flex items-center gap-2 sm:gap-4">
           <Link to="/explorar" className="rounded-sm p-2 text-white/60 transition hover:bg-white/5 hover:text-accent" aria-label="Pesquisar">
-            <Search size={20} />
+            <Search size={20} strokeWidth={1.8} />
           </Link>
 
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
               <Link to={isProducerRole(user?.role) ? '/painel' : '/perfil'} className="group flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full border border-accent/30 bg-surface text-accent transition group-hover:border-accent">
-                  <User size={16} />
+                <div className="flex h-9 w-9 items-center justify-center rounded-full border border-accent/30 bg-surface text-xs font-bold uppercase text-accent transition group-hover:border-accent">
+                  {user?.name?.charAt(0) || 'U'}
                 </div>
                 <span className="hidden max-w-32 truncate text-sm font-semibold text-white/80 transition group-hover:text-accent sm:block">{user?.name}</span>
               </Link>
               <button onClick={logout} className="rounded-sm p-2 text-white/40 transition hover:bg-white/5 hover:text-terracotta" title="Sair" aria-label="Sair">
-                <LogOut size={19} />
+                <LogOut size={19} strokeWidth={1.8} />
               </button>
             </div>
           ) : (
